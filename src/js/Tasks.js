@@ -9,9 +9,20 @@ export default class Tasks extends React.Component
 
     render()
     {
-        const {tasks,completeTask,deleteTask} = this.props;
+        const {tasks,completeTask,deleteTask,filter} = this.props;
         
-        let items = tasks.map((element)=>{
+        let items;
+        if (filter=="all") {
+            items = [...tasks];    
+        }
+        if (filter=="active") {
+            items = [...tasks].filter(element=>!element.completed);
+        }
+        if (filter=="completed") {
+            items = [...tasks].filter(element=>element.completed);
+        }
+        
+        items = items.map((element)=>{
             return <li 
                     className="task"
                     key={element.id}

@@ -2,6 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import Form from "./Form.js";
 import Tasks from "./Tasks.js";
+import Options from "./Options.js";
 
 export default class App extends React.Component
 {
@@ -10,7 +11,8 @@ export default class App extends React.Component
         super(props);
         this.state = {
             value:"",
-            tasks:[]
+            tasks:[],
+            filter:"all"
         }
     }
     render()
@@ -24,9 +26,11 @@ export default class App extends React.Component
                     value={value}/>
                 <Tasks 
                     tasks={this.state.tasks}
+                    filter={this.state.filter}
                     completeTask={this.completeTask.bind(this)}
                     deleteTask={this.deleteTask.bind(this)}
                     />
+                <Options selectFilter={this.selectFilter.bind(this)}/>
             </div>
         )
     }
@@ -86,5 +90,24 @@ export default class App extends React.Component
         this.setState((state)=>({
             tasks:state.tasks
         }))
+    }
+
+    selectFilter(e)
+    {
+        this.setState({
+            filter:e.target.getAttribute("filter")
+        })
+
+        let btns = [...document.querySelectorAll(".options button")];
+        btns.forEach(element => {
+            if (element.getAttribute("filter")==e.target.getAttribute("filter")) 
+            {
+                element.classList.add("active");
+            }
+            else
+            {
+                element.classList.remove("active");
+            }
+        });
     }
 }
