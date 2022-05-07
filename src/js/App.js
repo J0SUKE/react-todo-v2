@@ -57,10 +57,8 @@ export default class App extends React.Component
         }))
     }
 
-    completeTask(e)
-    {
-        let id = parseFloat(e.target.closest("li").getAttribute("id"));
-        
+    completeTask(id)
+    {   
         this.state.tasks.forEach(element => {
             if (element.id == id) 
             {
@@ -72,23 +70,13 @@ export default class App extends React.Component
             tasks:state.tasks
         }))
 
+        
     }
 
-    deleteTask(e)
+    deleteTask(id)
     {
-        let id = parseFloat(e.target.closest("li").getAttribute("id"));
-        
-        
-        for (let i = 0; i < this.state.tasks.length; i++) {
-            if (this.state.tasks[i].id == id) 
-            {
-                this.state.tasks.splice(i,1);
-            }
-            
-        }
-
         this.setState((state)=>({
-            tasks:state.tasks
+            tasks:state.tasks.filter(el=>el.id!==id)
         }))
     }
 
