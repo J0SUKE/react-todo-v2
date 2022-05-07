@@ -11,9 +11,10 @@ export default class App extends React.Component
         super(props);
         this.state = {
             value:"",
-            tasks:[],
+            tasks:this.getLocalTasks(),
             filter:"all"
         }
+
     }
     render()
     {
@@ -44,40 +45,65 @@ export default class App extends React.Component
 
     submitTask(e)
     {
-        const {value} = this.state; 
         e.preventDefault();
-        this.setState((state)=>
-        ({
-            value:"",
-            tasks:[...state.tasks,{
-                text:value,
-                completed:false,
-                id:Math.random()*1000
-            }]
-        }))
+        
+        const submitPromise = new Promise((resolve,reject)=>{
+            resolve(true);
+        })
+        
+        submitPromise.then(()=>{
+            this.setState((state)=>
+            ({
+                value:"",
+                tasks:[...state.tasks,{
+                    text:state.value,
+                    completed:false,
+                    id:Math.random()*1000
+                }]
+            }))
+        }).then(()=>{
+            localStorage.setItem("tasks",JSON.stringify(this.state.tasks));
+        })    
     }
 
     completeTask(id)
     {   
-        this.state.tasks.forEach(element => {
-            if (element.id == id) 
-            {
-                element.completed=!element.completed;
-            }
-        });
+            
+        const completePromise = new Promise((resolve,reject)=>{
+            resolve(true);
+        })
 
-        this.setState((state)=>({
-            tasks:state.tasks
-        }))
-
+        completePromise.then(()=>{
+            this.setState((state)=>({
+                tasks:state.tasks.map((item)=>{
+                    if (item.id==id) {
+                        return {
+                            ...item,
+                            completed:!item.completed
+                        }
+                    }
+                    return item;
+                })   
+            }))
+        }).then(()=>{
+            localStorage.setItem("tasks",JSON.stringify(this.state.tasks));
+        })
         
     }
 
     deleteTask(id)
     {
-        this.setState((state)=>({
-            tasks:state.tasks.filter(el=>el.id!==id)
-        }))
+        const deletePromises = new Promise((resolve,reject)=>{
+            resolve(true)
+        })
+        deletePromises.then(()=>{
+            this.setState((state)=>({
+                tasks:state.tasks.filter(el=>el.id!==id)
+            }))
+        }).then(()=>{
+            localStorage.setItem("tasks",JSON.stringify(this.state.tasks));
+        })
+        
     }
 
     selectFilter(e)
@@ -97,5 +123,17 @@ export default class App extends React.Component
                 element.classList.remove("active");
             }
         });
+    }
+
+    getLocalTasks()
+    {
+        const tasks = JSON.parse(localStorage.getItem("tasks"));
+        if (tasks==null) {
+            return [];
+        }
+        else
+        {
+            return tasks;
+        }
     }
 }
